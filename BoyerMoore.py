@@ -8,46 +8,56 @@ then shift P to the right
 so that the closest x to the left of position i in P 
 is below the mismatched x in T.
 '''
-def bad_character_rule(kmer):
-    bad_characters = {}
-    for char in "ACTGN":
-        bad_characters[char] = -1
-    for i in range(len(kmer)):
-        c = kmer[i]
-        bad_characters[c] = i
-    return bad_characters
+def bad_character_rule(kmer,seq_type):
+    bcr_shifts = {}
+    if seq_type.upper() == "DNA":
+        alphabet = "AGTCN"
+    elif seq_type.upper() == "RNA":
+        alphabet = "AGUCN"
 
+    for char in alphabet:
+        bcr_shifts[char] = -1
+    for i in range(len(kmer)):
+        char = kmer[i]
+        bcr_shifts[char] = i
+    return bcr_shifts
+
+'''
+Example: in the case of "CAGAG" k-mer, wil return [5,5,5,2,5,1], because if
+there's a mismatch at he second A at index 3, we can shift by two, so we
+end up at the second instance of "AG".
+'''
 def good_character_rule(kmer):
-    f = [0] * (len(kmer)+1)
-    s = [0] * (len(kmer)+1)
+    aux_table = [0] * (len(kmer)+1)
+    gcr_shifts = [0] * (len(kmer)+1)
     i = len(kmer)
     j = len(kmer)+1
-    f[i] = j
+    aux_table[i] = j
 
     while i>0:
         while j <= len(kmer)  and kmer[i-1] != kmer[j-1]:
-            if s[j] == 0:
-                s[j] = j-i
-            j = f[j]
+            if gcr_shifts[j] == 0:
+                gcr_shifts[j] = j-i
+            j = aux_table[j]
         i -= 1
         j -= 1
-        f[i] = j
-    j = f[0]
+        aux_table[i] = j
+    j = aux_table[0]
     for i in range(len(kmer)):
-        if s[i] == 0:
-            s[i] = j
+        if gcr_shifts[i] == 0:
+            gcr_shifts[i] = j
         if i == j:
-            j = f[j]
+            j = aux_table[j]
     
-    return s
+    return gcr_shifts
 
 '''
 Returns a list containing the leftmost indexes of each occurence of the kmer 
 in the sequence.
 '''
-def positions(sequence, kmer):
-    positions = []
-    bcr = bad_character_rule(kmer)
+def start_indexes(sequence, kmer, seq_type="DNA"):
+    start_indexes = []
+    bcr = bad_character_rule(kmer,seq_type)
     gcr = good_character_rule(kmer)
 
     shift = 0
@@ -59,32 +69,10 @@ def positions(sequence, kmer):
 
         # if whole pattern matches
         if i == -1:
-            positions.append(shift)
+            start_indexes.append(shift)
             shift = shift + 1
         else:
             j = sequence[shift + i]
             shift = shift + max(gcr[i+1], i - bcr[j])
 
-    return positions
-
-'''
-from FastQ import Sample
-
-print(bad_character_rule("CAGAG"))
-print(good_character_rule("CAGAG"))
-for label in sample.reads:
-    print(positions(sample.reads[label].seq, "CAGAG"))
-
-sample = fq_sample("./ExampleSample5.fq")
-for label in sample.reads:
-    print(positions(sample.reads[label].seq, "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"))
-    break
-
-sample = Sample("./ExampleSample2.fq")
-
-for label in sample.reads:
-    print(sample.reads[label].seq)
-    print(naive_string_search(sample.reads[label].seq, "CAG"))
-
-'''
-
+    return start_indexes
