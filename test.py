@@ -1,6 +1,5 @@
 import AhoCorasick
 import BoyerMoore
-import FastBoyerMoore
 
 seq = []
 kmer = []
@@ -13,8 +12,6 @@ kmer.append("AGC")
 seq_type.append("DNA")
 answer.append([0,14,107])
 function.append(BoyerMoore.start_indexes)
-#function.append(FastBoyerMoore.start_indexes)
-
 
 for j, y in enumerate(function):
     for i, x in enumerate(answer):
@@ -23,13 +20,18 @@ for j, y in enumerate(function):
         else:
             print(f'{y} failed check #{i}. {x}')
 
+import AhoCorasick
 
-for i, x in enumerate(answer):
-    y = "The Aho-Corasick algorithm"
-    AC_instance = AhoCorasick.AhoCorasick([kmer[i]],seq_type[i])
-    if x == AC_instance.start_indexes(seq[i]):
-        print(f'{y} passed check #{i}. {x}')
-    else:
-        print(f'{y} failed check #{i}. {x}')
+kmers = ['AGC', 'AGCC', 'GAAC', 'AAC']
+seq_type = "DNA"
+seq = "NNNNNAGGAGAAGCCAGAACGAGCNNN"
 
+AC_instance = AhoCorasick.Automaton(kmers,seq_type)
+y = 'The Aho-Corasick algorithm'
+x = AC_instance.start_indexes(seq)
+answer = {'AGC': [11, 21], 'AGCC': [11], 'GAAC': [16], 'AAC': [17]}
+if answer == x:
+    print(f'{y} passed the check.\n{x}')
+else:
+    print(f'{y} failed the check.\n {x}')
 
