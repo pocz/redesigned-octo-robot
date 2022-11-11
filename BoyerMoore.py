@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 ''' 
 Returns a list containing a value for each position i in P and character x,
 the position of the closest occurence of x in P to the left of i.
@@ -76,3 +78,48 @@ def start_indexes(sequence, kmer, seq_type="DNA"):
             shift = shift + max(gcr[i+1], i - bcr[j])
 
     return start_indexes
+
+def edge_indexes(sequence, kmer, seq_type="DNA"):
+    start_indexes = []
+    end_indexes = []
+    bcr = bad_character_rule(kmer,seq_type)
+    gcr = good_character_rule(kmer)
+
+    shift = 0
+    while shift <= len(sequence)-len(kmer):
+
+        i = len(kmer) - 1
+        while i >=0 and kmer[i] == sequence[i+shift]:
+            i = i - 1
+
+        # if whole pattern matches
+        if i == -1:
+            start_indexes.append(shift)
+            end_indexes.append(shift+(len(kmer)))
+            shift = shift + 1
+        else:
+            j = sequence[shift + i]
+            shift = shift + max(gcr[i+1], i - bcr[j])
+
+    return start_indexes, end_indexes
+
+def count(sequence, kmer, seq_type="DNA"):
+    count = 0
+    bcr = bad_character_rule(kmer,seq_type)
+    gcr = good_character_rule(kmer)
+
+    shift = 0
+    while shift <= len(sequence)-len(kmer):
+
+        i = len(kmer) - 1
+        while i >=0 and kmer[i] == sequence[i+shift]:
+            i = i - 1
+
+        # if whole pattern matches
+        if i == -1:
+            count = count + 1
+            shift = shift + 1
+        else:
+            j = sequence[shift + i]
+            shift = shift + max(gcr[i+1], i - bcr[j])
+    return count
