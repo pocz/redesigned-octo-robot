@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-
 ''' 
 Returns a list containing a value for each position i in P and character x,
 the position of the closest occurence of x in P to the left of i.
@@ -63,19 +61,25 @@ def start_indexes(sequence, kmer, seq_type="DNA"):
     gcr = good_character_rule(kmer)
 
     shift = 0
-    while shift <= len(sequence)-len(kmer):
+    sequence_length = len(sequence)
+    kmer_length = len(kmer)
+    while shift <= sequence_length - kmer_length:
 
-        i = len(kmer) - 1
+        i = kmer_length - 1
         while i >=0 and kmer[i] == sequence[i+shift]:
             i = i - 1
 
-        # if whole pattern matches
         if i == -1:
             start_indexes.append(shift)
             shift = shift + 1
         else:
             j = sequence[shift + i]
-            shift = shift + max(gcr[i+1], i - bcr[j])
+            gcr_shift = gcr[i+1]
+            bcr_shift = i - bcr[j]
+            if gcr_shift >= bcr_shift:
+                shift = shift + gcr_shift
+            else:
+                shift = shift + bcr_shift
 
     return start_indexes
 
@@ -86,16 +90,17 @@ def edge_indexes(sequence, kmer, seq_type="DNA"):
     gcr = good_character_rule(kmer)
 
     shift = 0
-    while shift <= len(sequence)-len(kmer):
+    sequence_length = len(sequence)
+    kmer_length = len(kmer)
+    while shift <= sequence_length - kmer_length:
 
-        i = len(kmer) - 1
+        i = kmer_length - 1
         while i >=0 and kmer[i] == sequence[i+shift]:
             i = i - 1
 
-        # if whole pattern matches
         if i == -1:
             start_indexes.append(shift)
-            end_indexes.append(shift+(len(kmer)))
+            end_indexes.append(shift+(kmer_length))
             shift = shift + 1
         else:
             j = sequence[shift + i]
@@ -109,13 +114,14 @@ def count(sequence, kmer, seq_type="DNA"):
     gcr = good_character_rule(kmer)
 
     shift = 0
-    while shift <= len(sequence)-len(kmer):
+    sequence_length = len(sequence)
+    kmer_length = len(kmer)
+    while shift <= sequence_length - kmer_length:
 
-        i = len(kmer) - 1
+        i = kmer_length - 1
         while i >=0 and kmer[i] == sequence[i+shift]:
             i = i - 1
 
-        # if whole pattern matches
         if i == -1:
             count = count + 1
             shift = shift + 1

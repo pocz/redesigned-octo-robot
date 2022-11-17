@@ -24,6 +24,7 @@ for seq in seqs:
     profiling.print_BM_profile(kmers,"DNA",seq)
 print(f'Boyer-Moore all kmers on 1 sequence')
 
+'''
 for i, seq in enumerate(seqs):
     profiling.print_AC_profile(kmers,"DNA",seq)
     print(f'Searching on {len(seq)} long sequence')
@@ -32,3 +33,4 @@ print(f'Aho-Corasick all kmers on 1 sequence')
 for seq in seqs:
     profiling.profile_processpool(seq,kmers)
 print(f'processpool B-M')
+'''

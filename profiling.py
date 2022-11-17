@@ -84,3 +84,4 @@ def profile_processpool(seq,kmers):
     stats.sort_stats('cumulative')
     stats.print_stats()
 
+
