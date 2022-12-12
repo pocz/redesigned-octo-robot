@@ -1,7 +1,9 @@
 Nukleotid szekvencia ábécéjét használó, különböző mintaillesztési algoritmusok alapvető implementációjait tartalmazó program. FastQ bemeneti fájlokat véve grafikusan megjeleníti a pontos egyezések szakaszait egy indexeket jelző számtengelyen.
 
-## Dependencies
+## Requirements
+Uses the following pip packages:
 <pre>
+PyQt5 pyqtgraph
 </pre>
 
 ## Running the visualizer (using test data files provided):
@@ -11,8 +13,10 @@ Nukleotid szekvencia ábécéjét használó, különböző mintaillesztési alg
 
 ## Parameters
 
+```
 --kmers     FASTQ file or files containing the k-mer to be searched;
 --seq       FASTQ file containing the sequence to search in;
---mode      function used for the search: ProcessPool=Uses the ProcessPoolExecutor from concurrent.futures,
-            Threading=Uses multiple threads via the Threading package, AhoCorasick=Uses an implementation of the Aho-Corasick prefix-tree algorithm.
- 
+--mode      method used for the search: ProcessPool Uses the ProcessPoolExecutor from concurrent.futures,
+            Threading=Uses multiple threads via the Threading package, 
+            AhoCorasick=Uses an implementation of the Aho-Corasick prefix-tree algorithm.
+``` 
