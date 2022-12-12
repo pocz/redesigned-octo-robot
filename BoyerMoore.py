@@ -1,3 +1,7 @@
+from concurrent.futures import ProcessPoolExecutor
+
+import threading
+
 ''' 
 Returns a list containing a value for each position i in P and character x,
 the position of the closest occurence of x in P to the left of i.
@@ -129,3 +133,20 @@ def count(sequence, kmer, seq_type="DNA"):
             j = sequence[shift + i]
             shift = shift + max(gcr[i+1], i - bcr[j])
     return count
+
+def start_indexes_parallel(seq,kmers,seq_type="DNA",workers=12):
+    pool = ProcessPoolExecutor(max_workers=workers)
+    results = pool.map(start_indexes,[seq]*len(kmers),kmers)
+    return list(results)
+
+def start_indexes_threading(seq,kmers,seq_type="DNA",threads=12):
+    results = list()
+    def thread_func(_seq,_kmer):
+        results.append(start_indexes(_seq,_kmer))
+    threads = list()
+    for i, kmer in enumerate(kmers):
+        arguments = (seq, kmer)
+        x = threading.Thread(target=thread_func,args=arguments)
+        x.start()
+        threads.append(x)
+    return list(results)
